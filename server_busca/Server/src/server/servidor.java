@@ -110,7 +110,7 @@ public class servidor {
                     enpartida = true;
                     System.out.println("lo envia la primera vez");
                     for (PrintWriter writer : writers) {
-                        writer.println("new " + x + "-" + y + ";" + tab.coordenadas_bombas + ";" + tab.coordenadas_numero + ";20");
+                        writer.println("new " + x + "-" + y + ";" + tab.coordenadas_bombas + ";" + tab.coordenadas_numero + ";"+b);
                         System.out.println("si entro para enviar");
                     }
                 }
@@ -121,11 +121,11 @@ public class servidor {
                     }
                 }
 
-                /*synchronized (mapa) {
+                synchronized (mapa) {
                     if (!mapa.containsKey(name)) {
                         mapa.put(name, out);
                     }
-                }*/
+                }
                 while (true) {
                     String input = in.nextLine();
                     if (input.equals("comienza")) {
@@ -133,7 +133,7 @@ public class servidor {
                             enpartida = true;
                             System.out.println("lo envia la primera vez");
                             for (PrintWriter writer : writers) {
-                                writer.println("new " + x + "-" + y + ";" + tab.coordenadas_bombas + ";" + tab.coordenadas_numero + ";20");
+                                writer.println("new " + x + "-" + y + ";" + tab.coordenadas_bombas + ";" + tab.coordenadas_numero + ";"+b);
                             }
                         }
                     }
@@ -155,7 +155,7 @@ public class servidor {
                             System.out.println("3: " + botonpulsado);
                             System.out.println("quien pulso: " + quien_pul);
                             if (!muertos.contains(quien_pul)) {
-                                System.out.println("si entro a morir");
+                                System.out.println("no esta muerto y dio click");
                                 tab.dondeyqueclickeo(posicionx, posiciony, botonpulsado, quien_pul);
                             }
                         }

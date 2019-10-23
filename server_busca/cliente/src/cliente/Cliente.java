@@ -35,15 +35,14 @@ public class Cliente {
     String serverAddress;
     Scanner in;
     static PrintWriter out = null;
-   
-    
+
     JButton tablero_botones[][];
     tablero tab;
     comenzar comenzar1 = new comenzar(0);
 
     public Cliente(String serverAddress) {
         this.serverAddress = serverAddress;
-       
+
     }
 
     private void correr() throws IOException, ClassNotFoundException {
@@ -51,20 +50,20 @@ public class Cliente {
             Socket socket = new Socket(serverAddress, 69);
             in = new Scanner(socket.getInputStream());
             out = new PrintWriter(socket.getOutputStream(), true);
-            
+
             while (in.hasNextLine()) {
                 String line = in.nextLine();
                 if (line.startsWith("SUBMITNAME")) {
-                    
+
                     out.println("agregame");
-                    
+
                 } else if (line.startsWith("NAMEACCEPTED")) {
-                    
+
                     System.out.println("acepto el nombre");
                     System.out.println(line.substring(13));
                     username = line.substring(13);
-                    
-                }else if (line.startsWith("actu")) {
+
+                } else if (line.startsWith("actu")) {
                     /*
                         actu 10,10,rojo_bomba.jpg
                         actu 10,10,naranja_bandera.jpg
@@ -80,7 +79,11 @@ public class Cliente {
                     if (lala.endsWith(".jpg")) {
                         String partido[] = lala.split(",");
                         tablero.tablero_botones[Integer.parseInt(partido[0])][Integer.parseInt(partido[1])].setIcon(new ImageIcon(getClass().getResource("/imagenes/" + partido[2])));
-                        //tablero.tablero_botones[Integer.parseInt(partido[0])][Integer.parseInt(partido[1])].setEnabled(false);
+                        /*try {
+                            tablero.tablero_botones[Integer.parseInt(partido[0])][Integer.parseInt(partido[1])].setText(partido[2].substring(0, partido[2].length()-12));
+                        } catch (Exception e) {
+                        }*/
+
                     } else if (lala.endsWith("-")) {
                         String partido[] = lala.split("-");
                         // [ "10,10," , "5,6,8" ]
@@ -88,10 +91,7 @@ public class Cliente {
                             String partido2[] = lala2.split(",", -1);
                             tablero.tablero_botones[Integer.parseInt(partido2[0])][Integer.parseInt(partido2[1])].setIcon(null);
                             tablero.tablero_botones[Integer.parseInt(partido2[0])][Integer.parseInt(partido2[1])].setEnabled(false);
-                            if (!partido2[2].equals("")) {
-                                tablero.tablero_botones[Integer.parseInt(partido2[0])][Integer.parseInt(partido2[1])].setText(partido2[2]);
-                            }
-
+                            tablero.tablero_botones[Integer.parseInt(partido2[0])][Integer.parseInt(partido2[1])].setText(partido2[2]);
                         }
                     } else if (lala.endsWith(".")) {
                         JOptionPane.showMessageDialog(tab, lala);
@@ -113,11 +113,17 @@ public class Cliente {
                     }
                     //para saber el tamaño en la parts2parts2[0]
                     String tamaño_t = parts2[0];
+                    //("new " + x + "-" + y + ";" + tab.coordenadas_bombas + ";" + tab.coordenadas_numero + ";20");
                     String[] valorx_y = tamaño_t.split("-", -1);
                     int tam_x = Integer.parseInt(valorx_y[0]);
                     int tam_y = Integer.parseInt(valorx_y[1]);
-                    tab = new tablero(tam_x, tam_y, username);
                     
+                    String band = parts2[3];
+                    int bandera = Integer.parseInt(band);
+                    
+                    tab = new tablero(tam_x, tam_y, username, bandera);
+                   
+                   
                     //para bombas busca en la parts2[1]
                     //5,5,*1-8,8,*1-1,3,*1
                     String nom = parts2[1];
@@ -129,25 +135,26 @@ public class Cliente {
                         int posx = Integer.parseInt(lugar_b[0]);
                         int posy = Integer.parseInt(lugar_b[1]);
                         tab.meterbomba(posx, posy);
-                     
+
                     }
                     //saber donde hay numero
                     String arreglo_numero = parts2[2];
                     String[] numeritos = arreglo_numero.split("-", -1);
                     for (int y = 0; y <= numeritos.length - 2; y++) {
                         String bombap1 = numeritos[y];
-                        
+
                         String[] lugar_b = bombap1.split(",", -1);
                         int posx = Integer.parseInt(lugar_b[0]);
                         int posy = Integer.parseInt(lugar_b[1]);
                         int n_b = Integer.parseInt(lugar_b[2]);
-                        
+
                         tab.meter_num(posx, posy, n_b);
                     }
-                    
+
                     comenzar1.dispose();
                     tab.setTitle("cliente-" + username);
                     tab.setLocationRelativeTo(null);
+                    tab.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     tab.setVisible(true);
 
                 } else if (line.startsWith("usuario")) {
@@ -164,11 +171,16 @@ public class Cliente {
                     comenzar1.setTitle("Confirmacion");
                     comenzar1.pack();
                     comenzar1.setLocationRelativeTo(null);
-                    if(numero_usuarios==1){
+                    if (numero_usuarios == 1) {
                         comenzar1.btn.setEnabled(false);
                     }
+                    comenzar1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     comenzar1.setVisible(true);
                     // }
+                }
+                else if(line.endsWith("*")){
+                    int numerodebanderasdiposnibles=Integer.parseInt(line.substring(0, line.length()-1));
+                    tab.numerobanderas.setText("numero de banderas: "+numerodebanderasdiposnibles);
                 }
             }
         } finally {
@@ -178,9 +190,9 @@ public class Cliente {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         String respuesta = JOptionPane.showInputDialog(null, "IP del servidor");
         Cliente client = new Cliente(respuesta);
-        
+
         client.correr();
-       
+
     }
 
 }

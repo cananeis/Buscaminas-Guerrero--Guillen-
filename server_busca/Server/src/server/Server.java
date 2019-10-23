@@ -11,8 +11,8 @@ public class Server {
         //tamaño del tablero valor de fila y columna
         int x=20,y=20;
         //numero de bombas
-        int bom=70;
-        servidor sala = new servidor(x, x, bom);
+        int bom=5;
+        servidor sala = new servidor(x, y, bom);
         ServerSocket servidor = new ServerSocket(69);
         while (true) {
             System.out.println("esperando cliente");
@@ -20,7 +20,7 @@ public class Server {
             System.out.println("ya entro cliente");
             if (!sala.agregarCliente(cliente)) {
                 System.out.println("Nuevo servidor");
-                sala = new servidor(x, x, bom);
+                sala = new servidor(x, y, bom);
                 sala.agregarCliente(cliente);
             }
         }
